@@ -1,9 +1,9 @@
-import nodemailer from "nodemailer"
 import dotenv from 'dotenv'
 dotenv.config()
+import nodemailer from "nodemailer"
 
 
-let transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     host:'smtp.gmail.com',
     port: 587,
     secure: false, 
@@ -16,17 +16,20 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+const URL_FRONTEND = process.env.URL_FRONTEND || "https://amikuna.vercel.app"; // fallback por si falla
+
 const sendMailToRegister = (userMail, token) => {
+    const confirmURL = `${URL_FRONTEND}/confirmar/${token}`;
+    console.log("Enlace de confirmación:", confirmURL);
 
     let mailOptions = {
         from: 'admin@epn.edu.ec',
         to: userMail,
         subject: " ❤️🔥 AmiKuna 🔥 ❤️",
-        html: `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}/confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>
+        html: `<p>Hola, haz clic <a href="${confirmURL}">aquí</a> para confirmar tu cuenta.</p>
         <hr>
-        <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>
-        `
-    }
+        <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>`
+    };
 
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
@@ -34,8 +37,9 @@ const sendMailToRegister = (userMail, token) => {
         } else {
             console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
         }
-    })
+    });
 }
+
 
 const sendMailToRecoveryPassword = async(userMail,token)=>{
     let info = await transporter.sendMail({
