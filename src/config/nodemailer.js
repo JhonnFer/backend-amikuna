@@ -1,68 +1,65 @@
-import nodemailer from "nodemailer"
-import dotenv from 'dotenv'
-dotenv.config()
+import nodemailer from "nodemailer";
+import dotenv from 'dotenv';
+dotenv.config();
 
-
-let transporter = nodemailer.createTransport({
-    host:'smtp.gmail.com',
-    port: 587,
-    secure: false, 
-    auth: {
-        user: process.env.GMAIL_USER, 
-        pass: process.env.GMAIL_APP_PASSWORD  
-    },
-    tls: {
-        ciphers: 'SSLv3'
-    }
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, 
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  },
+  tls: {
+    ciphers: 'SSLv3'
+  }
 });
 
 const sendMailToRegister = (userMail, token) => {
-
-    let mailOptions = {
-        from: 'admin@epn.edu.ec',
-        to: userMail,
-        subject: " ❤️🔥 AmiKuna 🔥 ❤️",
-        html: `
-  <p>Hola, haz clic 
-    <a href="${process.env.URL_FRONTEND.replace(/\/$/, '')}/confirmar/${token}">aquí</a> 
-    para confirmar tu cuenta.
-  </p>
-  <hr>
-  <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>
-`
-
-        
-    }
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
-        }
-    })
-}
-
-const sendMailToRecoveryPassword = async(userMail,token)=>{
-    let info = await transporter.sendMail({
+  const confirmUrl = `${process.env.URL_FRONTEND.replace(/\/$/, '')}/confirmar/${token}`;
+  
+  const mailOptions = {
     from: 'admin@epn.edu.ec',
     to: userMail,
-    subject: "Correo para reestablecer tu contraseña",
+    subject: "❤️🔥 AmiKuna 🔥 ❤️ - Confirma tu cuenta",
     html: `
-  <h1>❤️🔥 AmiKuna 🔥❤️</h1>
-  <hr>
-  <a href="${process.env.URL_FRONTEND.replace(/\/$/, '')}/recuperarpassword/${token}">
-    Clic para reestablecer tu contraseña
-  </a>
-  <hr>
-  <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>
-`
+      <p>Hola,</p>
+      <p>Haz clic en el siguiente enlace para confirmar tu cuenta:</p>
+      <a href="${confirmUrl}">${confirmUrl}</a>
+      <hr>
+      <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>
+    `
+  };
 
-    });
-    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
-}
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.error("❌ Error al enviar correo de confirmación:", error);
+    } else {
+      console.log("✅ Correo de confirmación enviado:", info.messageId);
+    }
+  });
+};
+
+const sendMailToRecoveryPassword = async (userMail, token) => {
+  const recoveryUrl = `${process.env.URL_FRONTEND.replace(/\/$/, '')}/recuperarpassword/${token}`;
+  
+  const info = await transporter.sendMail({
+    from: 'admin@epn.edu.ec',
+    to: userMail,
+    subject: "🔐 Recupera tu contraseña - AmiKuna",
+    html: `
+      <p>Hola,</p>
+      <p>Haz clic en el siguiente enlace para reestablecer tu contraseña:</p>
+      <a href="${recoveryUrl}">${recoveryUrl}</a>
+      <hr>
+      <footer>El equipo de AmiKuna te acompaña en todo momento.</footer>
+    `
+  });
+
+  console.log("✅ Correo de recuperación enviado:", info.messageId);
+};
 
 export {
-    sendMailToRegister,
-    sendMailToRecoveryPassword
-}
+  sendMailToRegister,
+  sendMailToRecoveryPassword
+};
