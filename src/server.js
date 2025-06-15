@@ -12,8 +12,9 @@ dotenv.config()
 
 // Configuraciones 
 app.set(`port`, process.env.PORT || 3000)
+// Middlewares 
+app.use(cors())
 
-app.use(cors()) // Middlewares 
 
 // Middleware 
 app.use(express.json())
