@@ -22,10 +22,11 @@ const sendMailToRegister = (userMail, token) => {
         from: 'admin@epn.edu.ec',
         to: userMail,
         subject: " ❤️🔥 AmiKuna 🔥 ❤️",
-        html: `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>
+        html: `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND.replace(/\/$/, '')}/confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>`
+
         <hr>
         <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>
-        `
+        
     }
 
     transporter.sendMail(mailOptions, function(error, info){
@@ -45,7 +46,7 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
     html: `
     <h1>" ❤️🔥 AmiKuna 🔥 ❤️"</h1>
     <hr>
-    <a href=${process.env.URL_FRONTEND}recuperarpassword/${token}>Clic para reestablecer tu contraseña</a>
+   <a href=${process.env.URL_FRONTEND.replace(/\/$/, '')}/recuperarpassword/${token}>Clic para reestablecer tu contraseña</a>
     <hr>
     <footer>El equipo de AmiKuna te da la más cordial bienvenida.</footer>
     `
